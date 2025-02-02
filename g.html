@@ -1,48 +1,379 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contador Infinito</title>
+    <title>Globo.ws</title>
+    <link rel="icon" href="https://github.com/lkddzzzzzzzzzzzzzzzzzzzzzzzzz/Globe.ws/blob/main/1fc24435-d77b-4e36-96a3-06170f78fcca_removalai_preview.png?raw=true" type="image/png">
     <style>
         body {
             font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        /* Tema Claro */
+        body.light-theme {
+            background-color: #f0f0f0;
+            color: #333;
+        }
+
+        /* Tema Escuro */
+        body.dark-theme {
+            background-color: #181818;
+            color: #fff;
+        }
+
+        /* Cabeçalho e logo */
+        header {
+            background-color: #f4f4f4;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background-color 0.3s;
+        }
+
+        body.dark-theme header {
+            background-color: #333;
+        }
+
+        header img {
+            height: 80px;
+            transition: height 0.3s;
+        }
+
+        /* Botão de alternar tema */
+        .theme-toggle {
+            cursor: pointer;
+            font-size: 24px;
+        }
+
+        .theme-toggle.light-theme {
+            color: black;
+        }
+
+        .theme-toggle.dark-theme {
+            color: white;
+        }
+
+        /* Caixinha de abas */
+        .tabs-container {
             display: flex;
             justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            background-color: #f0f0f0;
-        }
-        .container {
-            text-align: center;
+            margin: 20px 0;
+            padding: 0 20px;
+            border: 2px solid black;
             background-color: #fff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
-        h1 {
+
+        body.dark-theme .tabs-container {
+            background-color: #333;
+            border-color: #555;
+        }
+
+        .tabs {
+            display: flex;
+            list-style-type: none;
+            padding: 0;
             margin: 0;
-            font-size: 2rem;
+            gap: 20px;
+        }
+
+        .tab {
+            position: relative;
+            cursor: pointer;
+            font-weight: bold;
+            text-transform: uppercase;
+            padding: 15px 25px;
+            background-color: #e0e0e0;
             color: #333;
+            transition: background-color 0.3s, color 0.3s;
+            border: 2px solid transparent;
+        }
+
+        body.dark-theme .tab {
+            background-color: #555;
+            color: #fff;
+        }
+
+        .tab:hover {
+            background-color: #d3d3d3;
+            color: white;
+        }
+
+        body.dark-theme .tab:hover {
+            background-color: #777;
+        }
+
+        .tab.open {
+            background-color: #d3d3d3;
+            color: white;
+            border: 2px solid #a9a9a9;
+        }
+
+        body.dark-theme .tab.open {
+            background-color: #777;
+            border-color: #999;
+        }
+
+        .arrow {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            transition: transform 0.3s;
+        }
+
+        .sub-tabs {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background-color: #f0f0f0;
+            width: max-content;
+            border: 1px solid black;
+            padding: 10px;
+            transition: all 0.3s ease-in-out;
+        }
+
+        body.dark-theme .sub-tabs {
+            background-color: #555;
+            border-color: #777;
+        }
+
+        .tab.open .sub-tabs {
+            display: block;
+            opacity: 1;
+        }
+
+        .tab .sub-tabs div {
+            padding: 8px 12px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .tab .sub-tabs div:hover {
+            background-color: #e0e0e0;
+        }
+
+        body.dark-theme .tab .sub-tabs div:hover {
+            background-color: #777;
+        }
+
+        .tab.open .sub-tabs div {
+            color: #333;
+        }
+
+        body.dark-theme .tab.open .sub-tabs div {
+            color: #fff;
+        }
+
+        /* Abas de conteúdo */
+        .content {
+            display: none;
+            padding: 20px;
+            transition: opacity 0.5s ease-in-out;
+            opacity: 0;
+            margin: 0 auto;
+            width: 80%;
+            border: 2px solid black;
+            background-color: #fff;
+        }
+
+        body.dark-theme .content {
+            background-color: #333;
+            border-color: #555;
+        }
+
+        .content.active {
+            display: block;
+            opacity: 1;
+        }
+
+        .content h2 {
+            margin-top: 0;
+            text-align: center;
+        }
+
+        .content img {
+            max-width: 100%;
+            height: auto;
         }
     </style>
 </head>
-<body>
-    <div class="container">
-        <h1 id="counter">0</h1>
+<body class="light-theme">
+    <header>
+        <img src="https://github.com/lkddzzzzzzzzzzzzzzzzzzzzzzzzz/Globe.ws/blob/main/1fc24435-d77b-4e36-96a3-06170f78fcca_removalai_preview.png?raw=true" alt="Logo Globo.ws">
+        <span class="theme-toggle light-theme" onclick="toggleTheme()">🌞</span>
+    </header>
+
+    <!-- Container de Abas -->
+    <div class="tabs-container">
+        <ul class="tabs">
+            <li class="tab" onclick="toggleTab(0)">
+                Introdução
+                <span class="arrow">▶</span>
+                <div class="sub-tabs">
+                    <div onclick="changeTab(0)">Sobre o modelo</div>
+                </div>
+            </li>
+            <li class="tab" onclick="toggleTab(1)">
+                A
+                <span class="arrow">▶</span>
+                <div class="sub-tabs">
+                    <div onclick="changeTab(1)">A - A</div>
+                    <div onclick="changeTab(2)">B - A</div>
+                    <div onclick="changeTab(3)">C - A</div>
+                </div>
+            </li>
+            <li class="tab" onclick="toggleTab(2)">
+                B
+                <span class="arrow">▶</span>
+                <div class="sub-tabs">
+                    <div onclick="changeTab(4)">A - B</div>
+                    <div onclick="changeTab(5)">B - B</div>
+                    <div onclick="changeTab(6)">C - B</div>
+                </div>
+            </li>
+            <li class="tab" onclick="toggleTab(3)">
+                C
+                <span class="arrow">▶</span>
+                <div class="sub-tabs">
+                    <div onclick="changeTab(7)">A - C</div>
+                    <div onclick="changeTab(8)">B - C</div>
+                    <div onclick="changeTab(9)">C - C</div>
+                </div>
+            </li>
+            <li class="tab" onclick="toggleTab(4)">
+                D
+                <span class="arrow">▶</span>
+                <div class="sub-tabs">
+                    <div onclick="changeTab(10)">A - D</div>
+                    <div onclick="changeTab(11)">B - D</div>
+                    <div onclick="changeTab(12)">C - D</div>
+                </div>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Conteúdo das Abas -->
+    <div class="content" id="content-0">
+        <h2>Introdução</h2>
+        <p>Teste.</p>
+    </div>
+
+    <div class="content" id="content-1">
+        <h2>Aba A - A</h2>
+        <p>Texto da Aba A - A.</p>
+    </div>
+
+    <div class="content" id="content-2">
+        <h2>Aba A - B</h2>
+        <p>Texto da Aba A - B.</p>
+    </div>
+
+    <div class="content" id="content-3">
+        <h2>Aba A - C</h2>
+        <p>Texto da Aba A - C.</p>
+    </div>
+
+    <div class="content" id="content-4">
+        <h2>Aba B - A</h2>
+        <p>Texto da Aba B - A.</p>
+    </div>
+
+    <div class="content" id="content-5">
+        <h2>Aba B - B</h2>
+        <p>Texto da Aba B - B.</p>
+    </div>
+
+    <div class="content" id="content-6">
+        <h2>Aba B - C</h2>
+        <p>Texto da Aba B - C.</p>
+    </div>
+
+    <div class="content" id="content-7">
+        <h2>Aba C - A</h2>
+        <p>Texto da Aba C - A.</p>
+    </div>
+
+    <div class="content" id="content-8">
+        <h2>Aba C - B</h2>
+        <p>Texto da Aba C - B.</p>
+    </div>
+
+    <div class="content" id="content-9">
+        <h2>Aba C - C</h2>
+        <p>Texto da Aba C - C.</p>
+    </div>
+
+    <div class="content" id="content-10">
+        <h2>Aba D - A</h2>
+        <p>Texto da Aba D - A.</p>
+    </div>
+
+    <div class="content" id="content-11">
+        <h2>Aba D - B</h2>
+        <p>Texto da Aba D - B.</p>
+    </div>
+
+    <div class="content" id="content-12">
+        <h2>Aba D - C</h2>
+        <p>Texto da Aba D - C.</p>
     </div>
 
     <script>
-        let counter = 1;
-        const counterElement = document.getElementById('counter');
-
-        function updateCounter() {
-            counterElement.textContent = counter;
-            counter++;
+        // Função para alternar o tema claro e escuro
+        function toggleTheme() {
+            const body = document.body;
+            const themeToggle = document.querySelector('.theme-toggle');
+            body.classList.toggle('dark-theme');
+            body.classList.toggle('light-theme');
+            themeToggle.classList.toggle('dark-theme');
+            themeToggle.classList.toggle('light-theme');
+            themeToggle.textContent = body.classList.contains('dark-theme') ? '🌙' : '🌞';
         }
 
-        setInterval(updateCounter, 1000);
+        // Função para alternar a visualização das abas
+        function toggleTab(index) {
+            const tabs = document.querySelectorAll('.tab');
+            const subTabs = document.querySelectorAll('.sub-tabs');
+            const arrows = document.querySelectorAll('.arrow');
+
+            // Fechar todas as abas antes de abrir a selecionada
+            tabs.forEach((tab, i) => {
+                if (i !== index) {
+                    tab.classList.remove('open');
+                    subTabs[i].style.display = 'none';
+                    arrows[i].style.transform = 'rotate(0)';
+                }
+            });
+
+            const selectedTab = tabs[index];
+            const selectedSubTabs = subTabs[index];
+            const selectedArrow = arrows[index];
+
+            if (selectedTab.classList.contains('open')) {
+                selectedTab.classList.remove('open');
+                selectedSubTabs.style.display = 'none';
+                selectedArrow.style.transform = 'rotate(0)';
+            } else {
+                selectedTab.classList.add('open');
+                selectedSubTabs.style.display = 'block';
+                selectedArrow.style.transform = 'rotate(90deg)';
+            }
+        }
+
+        // Função para trocar o conteúdo das abas
+        function changeTab(index) {
+            const contents = document.querySelectorAll('.content');
+            contents.forEach((content, i) => {
+                content.classList.remove('active');
+                if (i === index) content.classList.add('active');
+            });
+        }
     </script>
 </body>
 </html>
